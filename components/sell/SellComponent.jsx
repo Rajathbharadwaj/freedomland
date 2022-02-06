@@ -1,4 +1,5 @@
 import Moralis from "moralis/dist/moralis.min.js";
+import kyc from "./sellLogic";
 
 const serverUrl = "https://6new31oxnhyo.usemoralis.com:2053/server";
 const appId = "6T1zypaV0NTQ6h53jzRqLRi9AvFDZTXQTbe4rULi";
@@ -8,13 +9,19 @@ function SellComponent() {
   const promises = [];
   const submitForm = async (event) => {
     event.preventDefault();
+    let user = Moralis.User.current();
+    if (!user) {
+      user = await Moralis.authenticate();
+    }
+    console.log("logged in user:", user);
 
     const data = new FormData(event.target);
     const docsArray = Array.from(event.target["doc-1"].files);
     const picArray = Array.from(event.target["pic-1"].files);
     console.log("isRented : ", data.get("isRent"));
     console.log("value : ", data.get("value"));
-    if (docsArray?.length == 0 || picArray?.length == 0) {
+    if (false) {
+      // if (docsArray?.length == 0 || picArray?.length == 0) {
       console.log("a file and a picture are required");
       alert("a file and a picture are required");
       return;
@@ -48,6 +55,8 @@ function SellComponent() {
       files: fileDataArray,
     };
     console.log(formData);
+
+    kyc(formData, user);
   };
   return (
     <>
